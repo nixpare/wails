@@ -536,7 +536,6 @@ func (a *App) Run() error {
 	go func() {
 		for {
 			event := <-windowKeyEvents
-			println("TEST", event.windowId, event.acceleratorString)
 			go a.handleWindowKeyEvent(event)
 		}
 	}()

@@ -15,6 +15,7 @@ extern bool hasListeners(unsigned int);
     [self setBackgroundColor:[NSColor clearColor]];
     [self setOpaque:NO];
     [self setMovableByWindowBackground:YES];
+
     return self;
 }
 - (void)keyDown:(NSEvent *)event {
@@ -45,38 +46,6 @@ extern bool hasListeners(unsigned int);
     processWindowKeyDownEvent(delegate.windowId, utf8String);
 }
 - (NSString *)keyStringFromEvent:(NSEvent *)event {
-    // Get the pressed key
-    // Check for special keys like escape and tab
-    NSString *characters = [event characters];
-    if (characters.length == 0) {
-        return @"";
-    }
-    if ([characters isEqualToString:@"\b"]) {
-        return @"backspace";
-    }
-    if ([characters isEqualToString:@"\e"]) {
-        return @"escape";
-    }
-    // page down
-    if ([characters isEqualToString:@"\x0B"]) {
-        return @"page down";
-    }
-    // page up
-    if ([characters isEqualToString:@"\x0E"]) {
-        return @"page up";
-    }
-    // home
-    if ([characters isEqualToString:@"\x01"]) {
-        return @"home";
-    }
-    // end
-    if ([characters isEqualToString:@"\x04"]) {
-        return @"end";
-    }
-    // clear
-    if ([characters isEqualToString:@"\x0C"]) {
-        return @"clear";
-    }
     switch ([event keyCode]) {
         // Function keys
         case 122: return @"f1";
@@ -148,6 +117,11 @@ extern bool hasListeners(unsigned int);
         case 48: return @"tab";
         case 53: return @"escape";
         case 49: return @"space";
+        case 114: return @"help";
+        case 115: return @"home";
+        case 116: return @"page up";
+        case 121: return @"page down";
+        case 119: return @"end";
         // Punctuation and other keys (for a standard US layout)
         case 33: return @"[";
         case 30: return @"]";
