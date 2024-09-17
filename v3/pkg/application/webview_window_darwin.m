@@ -51,7 +51,6 @@ extern bool hasListeners(unsigned int);
     if (characters.length == 0) {
         return @"";
     }
-    NSLog(@"Chars: %@ - Code: %d", characters, event.keyCode);
     if ([characters isEqualToString:@"\b"]) {
         return @"backspace";
     }
