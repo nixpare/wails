@@ -51,9 +51,7 @@ extern bool hasListeners(unsigned int);
     if (characters.length == 0) {
         return @"";
     }
-    if ([characters isEqualToString:@"\r"]) {
-        return @"enter";
-    }
+    NSLog(@"Chars: %@ - Code: %d", characters, event.keyCode);
     if ([characters isEqualToString:@"\b"]) {
         return @"backspace";
     }
@@ -141,6 +139,7 @@ extern bool hasListeners(unsigned int);
         case 28: return @"8";
         case 25: return @"9";
         // Other special keys
+        case 36: return @"enter";
         case 51: return @"delete";
         case 117: return @"forward delete";
         case 123: return @"left";
