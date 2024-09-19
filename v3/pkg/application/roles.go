@@ -20,8 +20,6 @@ const (
 
 	Hide               Role = iota
 	HideOthers         Role = iota
-	ShowAll            Role = iota
-	BringAllToFront    Role = iota
 	UnHide             Role = iota
 	About              Role = iota
 	Undo               Role = iota
@@ -35,7 +33,7 @@ const (
 	SpeechMenu         Role = iota
 	Quit               Role = iota
 	FileMenu           Role = iota
-	CloseWindow        Role = iota
+	Close              Role = iota
 	Reload             Role = iota
 	ForceReload        Role = iota
 	OpenDevTools       Role = iota
@@ -47,28 +45,25 @@ const (
 	Minimize   Role = iota
 	Zoom       Role = iota
 	FullScreen Role = iota
+	//Front      Role = iota
+	//WindowRole Role = iota
 
-	NewFile        Role = iota
-	Open           Role = iota
-	Save           Role = iota
-	SaveAs         Role = iota
-	StartSpeaking  Role = iota
-	StopSpeaking   Role = iota
-	Revert         Role = iota
-	Print          Role = iota
-	PageLayout     Role = iota
-	Find           Role = iota
-	FindAndReplace Role = iota
-	FindNext       Role = iota
-	FindPrevious   Role = iota
-	Front          Role = iota
-	Help           Role = iota
+	//QuitRole               Role =
+	//TogglefullscreenRole   Role = "togglefullscreen"
+	//ViewMenuRole           Role = "viewMenu"
+	//WindowMenuRole         Role = "windowMenu"
+
+	//FrontRole              Role = "front"
+	//ZoomRole               Role = "zoom"
+	//WindowSubMenuRole      Role = "windowSubMenu"
+	//HelpSubMenuRole        Role = "helpSubMenu"
+	//SeparatorItemRole      Role = "separatorItem"
 )
 
-func NewFileMenu() *MenuItem {
+func newFileMenu() *MenuItem {
 	fileMenu := NewMenu()
 	if runtime.GOOS == "darwin" {
-		fileMenu.AddRole(CloseWindow)
+		fileMenu.AddRole(Close)
 	} else {
 		fileMenu.AddRole(Quit)
 	}
@@ -77,7 +72,7 @@ func NewFileMenu() *MenuItem {
 	return subMenu
 }
 
-func NewViewMenu() *MenuItem {
+func newViewMenu() *MenuItem {
 	viewMenu := NewMenu()
 	viewMenu.AddRole(Reload)
 	viewMenu.AddRole(ForceReload)
@@ -93,7 +88,7 @@ func NewViewMenu() *MenuItem {
 	return subMenu
 }
 
-func NewAppMenu() *MenuItem {
+func newAppMenu() *MenuItem {
 	if runtime.GOOS != "darwin" {
 		return nil
 	}
@@ -112,7 +107,7 @@ func NewAppMenu() *MenuItem {
 	return subMenu
 }
 
-func NewEditMenu() *MenuItem {
+func newEditMenu() *MenuItem {
 	editMenu := NewMenu()
 	editMenu.AddRole(Undo)
 	editMenu.AddRole(Redo)
@@ -137,24 +132,22 @@ func NewEditMenu() *MenuItem {
 	return subMenu
 }
 
-func NewWindowMenu() *MenuItem {
+func newWindowMenu() *MenuItem {
 	menu := NewMenu()
 	menu.AddRole(Minimize)
 	menu.AddRole(Zoom)
 	if runtime.GOOS == "darwin" {
 		menu.AddSeparator()
-		menu.AddRole(Front)
-		//menu.AddSeparator()
-		//menu.AddRole(Window)
+		menu.AddRole(FullScreen)
 	} else {
-		menu.AddRole(CloseWindow)
+		menu.AddRole(Close)
 	}
 	subMenu := NewSubMenuItem("Window")
 	subMenu.submenu = menu
 	return subMenu
 }
 
-func NewHelpMenu() *MenuItem {
+func newHelpMenu() *MenuItem {
 	menu := NewMenu()
 	menu.Add("Learn More").OnClick(func(ctx *Context) {
 		globalApplication.CurrentWindow().SetURL("https://wails.io")

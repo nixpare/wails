@@ -24,7 +24,7 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: false,
 		},
 	})
-	app.OnApplicationEvent(events.Mac.ApplicationDidFinishLaunching, func(event *application.ApplicationEvent) {
+	app.On(events.Mac.ApplicationDidFinishLaunching, func(event *application.Event) {
 		log.Println("ApplicationDidFinishLaunching")
 	})
 

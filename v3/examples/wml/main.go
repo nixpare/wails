@@ -35,10 +35,10 @@ func main() {
 		},
 	})
 
-	app.OnEvent("button-pressed", func(_ *application.CustomEvent) {
+	app.Events.On("button-pressed", func(_ *application.WailsEvent) {
 		println("Button Pressed!")
 	})
-	app.OnEvent("hover", func(_ *application.CustomEvent) {
+	app.Events.On("hover", func(_ *application.WailsEvent) {
 		println("Hover time!")
 	})
 

@@ -25,7 +25,7 @@ func main() {
 		},
 	})
 
-	app.OnApplicationEvent(events.Mac.ApplicationDidFinishLaunching, func(*application.ApplicationEvent) {
+	app.On(events.Mac.ApplicationDidFinishLaunching, func(*application.Event) {
 		log.Println("ApplicationDidFinishLaunching")
 	})
 

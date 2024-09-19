@@ -44,7 +44,7 @@ func main() {
 	}
 
 	// Click Dock icon tigger application show
-	app.OnApplicationEvent(events.Mac.ApplicationShouldHandleReopen, func(event *application.ApplicationEvent) {
+	app.On(events.Mac.ApplicationShouldHandleReopen, func(event *application.Event) {
 		println("reopen")
 		window.Show()
 	})

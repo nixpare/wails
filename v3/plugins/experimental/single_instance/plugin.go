@@ -1,7 +1,6 @@
 package single_instance
 
 import (
-	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -44,8 +43,8 @@ func NewPlugin(config *Config) *Plugin {
 	}
 }
 
-// OnShutdown is called when the app is shutting down
-func (p *Plugin) OnShutdown() error {
+// Shutdown is called when the app is shutting down
+func (p *Plugin) Shutdown() error {
 	return p.lockfile.Close()
 }
 
@@ -54,10 +53,10 @@ func (p *Plugin) Name() string {
 	return "github.com/wailsapp/wails/v3/plugins/single-instance"
 }
 
-// OnStartup is called when the app is starting up. You can use this to
+// Init is called when the app is starting up. You can use this to
 // initialise any resources you need. You can also access the application
 // instance via the app property.
-func (p *Plugin) OnStartup(ctx context.Context, options application.ServiceOptions) error {
+func (p *Plugin) Init(api application.PluginAPI) error {
 	var err error
 	lockfileName := p.config.LockFilePath + "/" + p.config.LockFileName
 	p.lockfile, err = CreateLockFile(lockfileName, application.Get().GetPID())

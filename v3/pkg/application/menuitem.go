@@ -116,119 +116,77 @@ func NewSubMenuItem(label string) *MenuItem {
 }
 
 func NewRole(role Role) *MenuItem {
-	var result *MenuItem
 	switch role {
 	case AppMenu:
-		result = NewAppMenu()
+		return newAppMenu()
 	case EditMenu:
-		result = NewEditMenu()
+		return newEditMenu()
 	case FileMenu:
-		result = NewFileMenu()
+		return newFileMenu()
 	case ViewMenu:
-		result = NewViewMenu()
+		return newViewMenu()
 	case ServicesMenu:
 		return NewServicesMenu()
 	case SpeechMenu:
-		result = NewSpeechMenu()
+		return newSpeechMenu()
 	case WindowMenu:
-		result = NewWindowMenu()
+		return newWindowMenu()
 	case HelpMenu:
-		result = NewHelpMenu()
+		return newHelpMenu()
 	case Hide:
-		result = NewHideMenuItem()
-	case Front:
-		result = NewFrontMenuItem()
+		return newHideMenuItem()
 	case HideOthers:
-		result = NewHideOthersMenuItem()
+		return newHideOthersMenuItem()
 	case UnHide:
-		result = NewUnhideMenuItem()
+		return newUnhideMenuItem()
 	case Undo:
-		result = NewUndoMenuItem()
+		return newUndoMenuItem()
 	case Redo:
-		result = NewRedoMenuItem()
+		return newRedoMenuItem()
 	case Cut:
-		result = NewCutMenuItem()
+		return newCutMenuItem()
 	case Copy:
-		result = NewCopyMenuItem()
+		return newCopyMenuItem()
 	case Paste:
-		result = NewPasteMenuItem()
+		return newPasteMenuItem()
 	case PasteAndMatchStyle:
-		result = NewPasteAndMatchStyleMenuItem()
+		return newPasteAndMatchStyleMenuItem()
 	case SelectAll:
-		result = NewSelectAllMenuItem()
+		return newSelectAllMenuItem()
 	case Delete:
-		result = NewDeleteMenuItem()
+		return newDeleteMenuItem()
 	case Quit:
-		result = NewQuitMenuItem()
-	case CloseWindow:
-		result = NewCloseMenuItem()
+		return newQuitMenuItem()
+	case Close:
+		return newCloseMenuItem()
 	case About:
-		result = NewAboutMenuItem()
+		return newAboutMenuItem()
 	case Reload:
-		result = NewReloadMenuItem()
+		return newReloadMenuItem()
 	case ForceReload:
-		result = NewForceReloadMenuItem()
+		return newForceReloadMenuItem()
 	case ToggleFullscreen:
-		result = NewToggleFullscreenMenuItem()
+		return newToggleFullscreenMenuItem()
 	case OpenDevTools:
-		result = NewOpenDevToolsMenuItem()
+		return newOpenDevToolsMenuItem()
 	case ResetZoom:
-		result = NewZoomResetMenuItem()
+		return newZoomResetMenuItem()
 	case ZoomIn:
-		result = NewZoomInMenuItem()
+		return newZoomInMenuItem()
 	case ZoomOut:
-		result = NewZoomOutMenuItem()
+		return newZoomOutMenuItem()
 	case Minimize:
-		result = NewMinimizeMenuItem()
+		return newMinimizeMenuItem()
 	case Zoom:
-		result = NewZoomMenuItem()
+		return newZoomMenuItem()
 	case FullScreen:
-		result = NewFullScreenMenuItem()
-	case Print:
-		result = NewPrintMenuItem()
-	case PageLayout:
-		result = NewPageLayoutMenuItem()
-	case NoRole:
-	case ShowAll:
-		result = NewShowAllMenuItem()
-	case BringAllToFront:
-		result = NewBringAllToFrontMenuItem()
-	case NewFile:
-		result = NewNewFileMenuItem()
-	case Open:
-		result = NewOpenMenuItem()
-	case Save:
-		result = NewSaveMenuItem()
-	case SaveAs:
-		result = NewSaveAsMenuItem()
-	case StartSpeaking:
-		result = NewStartSpeakingMenuItem()
-	case StopSpeaking:
-		result = NewStopSpeakingMenuItem()
-	case Revert:
-		result = NewRevertMenuItem()
-	case Find:
-		result = NewFindMenuItem()
-	case FindAndReplace:
-		result = NewFindAndReplaceMenuItem()
-	case FindNext:
-		result = NewFindNextMenuItem()
-	case FindPrevious:
-		result = NewFindPreviousMenuItem()
-	case Help:
-		result = NewHelpMenuItem()
+		return newFullScreenMenuItem()
 
 	default:
 		globalApplication.error(fmt.Sprintf("No support for role: %v", role))
 		os.Exit(1)
 	}
-
-	if result == nil {
-		return nil
-	}
-
-	result.role = role
-	return result
+	return nil
 }
 
 func NewServicesMenu() *MenuItem {
@@ -269,7 +227,7 @@ func (m *MenuItem) handleClick() {
 func (m *MenuItem) SetAccelerator(shortcut string) *MenuItem {
 	accelerator, err := parseAccelerator(shortcut)
 	if err != nil {
-		globalApplication.error("invalid accelerator. %v", err.Error())
+		globalApplication.error("invalid accelerator:", err.Error())
 		return m
 	}
 	m.accelerator = accelerator
@@ -295,11 +253,6 @@ func (m *MenuItem) SetTooltip(s string) *MenuItem {
 	if m.impl != nil {
 		m.impl.setTooltip(s)
 	}
-	return m
-}
-
-func (m *MenuItem) SetRole(role Role) *MenuItem {
-	m.role = role
 	return m
 }
 

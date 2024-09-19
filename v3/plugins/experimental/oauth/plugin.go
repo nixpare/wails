@@ -1,7 +1,6 @@
 package oauth
 
 import (
-	"context"
 	"fmt"
 	"github.com/gorilla/pat"
 	"github.com/gorilla/sessions"
@@ -27,6 +26,7 @@ type Plugin struct {
 	config Config
 	server *http.Server
 	router *pat.Router
+	api    application.PluginAPI
 }
 
 type Config struct {
@@ -81,7 +81,8 @@ func (p *Plugin) Name() string {
 	return "github.com/wailsapp/wails/v3/plugins/oauth"
 }
 
-func (p *Plugin) OnStartup(ctx context.Context, options application.ServiceOptions) error {
+func (p *Plugin) Init(api application.PluginAPI) error {
+	p.api = api
 	store := sessions.NewCookieStore([]byte(p.config.SessionSecret))
 	store.MaxAge(p.config.MaxAge)
 	store.Options.Path = "/"
@@ -231,13 +232,16 @@ func (p *Plugin) start(provider string) error {
 	router := pat.New()
 	router.Get("/auth/{provider}/callback", func(res http.ResponseWriter, req *http.Request) {
 
+		event := &application.WailsEvent{Name: Success}
+
 		user, err := gothic.CompleteUserAuth(res, req)
 		if err != nil {
-			application.Get().EmitEvent(Error, err.Error())
+			event.Data = err.Error()
+			event.Name = Error
 		} else {
-			application.Get().EmitEvent(Success, user)
+			event.Data = user
 		}
-
+		application.Get().Events.Emit(event)
 		_ = p.server.Close()
 		p.server = nil
 	})
@@ -279,10 +283,10 @@ func (p *Plugin) start(provider string) error {
 	window := application.Get().NewWebviewWindowWithOptions(*p.config.WindowConfig)
 	window.Show()
 
-	application.Get().OnEvent(Success, func(event *application.CustomEvent) {
+	application.Get().Events.On(Success, func(event *application.WailsEvent) {
 		window.Close()
 	})
-	application.Get().OnEvent(Error, func(event *application.CustomEvent) {
+	application.Get().Events.On(Error, func(event *application.WailsEvent) {
 		window.Close()
 	})
 
@@ -297,11 +301,12 @@ func (p *Plugin) logout(provider string) error {
 	router := pat.New()
 	router.Get("/logout/{provider}", func(res http.ResponseWriter, req *http.Request) {
 		err := gothic.Logout(res, req)
+		event := &application.WailsEvent{Name: LoggedOut}
 		if err != nil {
-			application.Get().EmitEvent(Error, err.Error())
-		} else {
-			application.Get().EmitEvent(LoggedOut)
+			event.Data = err.Error()
+			event.Name = Error
 		}
+		application.Get().Events.Emit(event)
 		_ = p.server.Close()
 		p.server = nil
 	})
@@ -339,10 +344,10 @@ func (p *Plugin) logout(provider string) error {
 	window := application.Get().NewWebviewWindowWithOptions(*p.config.WindowConfig)
 	window.Show()
 
-	application.Get().OnEvent(LoggedOut, func(event *application.CustomEvent) {
+	application.Get().Events.On(LoggedOut, func(event *application.WailsEvent) {
 		window.Close()
 	})
-	application.Get().OnEvent(Error, func(event *application.CustomEvent) {
+	application.Get().Events.On(Error, func(event *application.WailsEvent) {
 		window.Close()
 	})
 

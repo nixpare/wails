@@ -13,29 +13,12 @@ import (
 // Valid values may only be obtained by calling [NewService].
 type Service struct {
 	instance any
-	options  ServiceOptions
-}
-
-type ServiceOptions struct {
-	// Name can be set to override the name of the service
-	// This is useful for logging and debugging purposes
-	Name string
-	// Route is the path to the assets
-	Route string
-}
-
-var DefaultServiceOptions = ServiceOptions{
-	Route: "",
 }
 
 // NewService returns a Service value wrapping the given pointer.
 // If T is not a named type, the returned value is invalid.
-// The prefix is used if Service implements a http.Handler only one allowed
-func NewService[T any](instance *T, options ...ServiceOptions) Service {
-	if len(options) == 1 {
-		return Service{instance, options[0]}
-	}
-	return Service{instance, DefaultServiceOptions}
+func NewService[T any](instance *T) Service {
+	return Service{instance}
 }
 
 func (s Service) Instance() any {
@@ -78,6 +61,9 @@ type Options struct {
 
 	// Assets are the application assets to be used.
 	Assets AssetOptions
+
+	// Plugins is a map of plugins used by the application
+	Plugins map[string]Plugin
 
 	// Flags are key value pairs that are available to the frontend.
 	// This is also used by Wails to provide information to the frontend.
@@ -195,10 +181,6 @@ type MacOptions struct {
 
 // WindowsOptions contains options for Windows applications.
 type WindowsOptions struct {
-
-	// Window class name
-	// Default: WailsWebviewWindow
-	WndClass string
 
 	// WndProcInterceptor is a function that will be called for every message sent in the application.
 	// Use this to hook into the main message loop. This is useful for handling custom window messages.

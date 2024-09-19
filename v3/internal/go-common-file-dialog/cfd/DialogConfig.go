@@ -3,7 +3,6 @@
 package cfd
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -115,10 +114,6 @@ func (config *DialogConfig) apply(dialog Dialog) (err error) {
 		}
 
 		if config.SelectedFileFilterIndex != 0 {
-			if config.SelectedFileFilterIndex > uint(len(fileFilters)) {
-				err = fmt.Errorf("selected file filter index out of range")
-				return
-			}
 			err = dialog.SetSelectedFileFilterIndex(config.SelectedFileFilterIndex)
 			if err != nil {
 				return

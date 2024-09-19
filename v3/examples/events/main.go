@@ -16,8 +16,8 @@ var assets embed.FS
 func main() {
 
 	app := application.New(application.Options{
-		Name:        "customEventProcessor Demo",
-		Description: "A demo of the customEventProcessor API",
+		Name:        "Events Demo",
+		Description: "A demo of the Events API",
 		Assets: application.AssetOptions{
 			Handler: application.BundledAssetFileServer(assets),
 		},
@@ -27,21 +27,22 @@ func main() {
 	})
 
 	// Custom event handling
-	app.OnEvent("myevent", func(e *application.CustomEvent) {
-		app.Logger.Info("[Go] CustomEvent received", "name", e.Name, "data", e.Data, "sender", e.Sender, "cancelled", e.Cancelled)
+	app.Events.On("myevent", func(e *application.WailsEvent) {
+		app.Logger.Info("[Go] WailsEvent received", "name", e.Name, "data", e.Data, "sender", e.Sender, "cancelled", e.Cancelled)
 	})
 
 	// OS specific application events
-	app.OnApplicationEvent(events.Common.ApplicationStarted, func(event *application.ApplicationEvent) {
+	app.On(events.Common.ApplicationStarted, func(event *application.Event) {
 		for {
-			// This emits a custom event every 10 seconds
-			// As it's sent from the application, the sender will be blank
-			app.EmitEvent("myevent", "hello")
+			app.Events.Emit(&application.WailsEvent{
+				Name: "myevent",
+				Data: "hello",
+			})
 			time.Sleep(10 * time.Second)
 		}
 	})
 
-	app.OnApplicationEvent(events.Common.ThemeChanged, func(event *application.ApplicationEvent) {
+	app.On(events.Common.ThemeChanged, func(event *application.Event) {
 		app.Logger.Info("System theme changed!")
 		if event.Context().IsDarkMode() {
 			app.Logger.Info("System is now using dark mode!")
@@ -51,12 +52,12 @@ func main() {
 	})
 
 	// Platform agnostic events
-	app.OnApplicationEvent(events.Common.ApplicationStarted, func(event *application.ApplicationEvent) {
+	app.On(events.Common.ApplicationStarted, func(event *application.Event) {
 		app.Logger.Info("events.Common.ApplicationStarted fired!")
 	})
 
 	win1 := app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title: "Window 1",
+		Title: "Events Demo",
 		Name:  "Window 1",
 		Mac: application.MacWindow{
 			Backdrop:                application.MacBackdropTranslucent,
@@ -78,20 +79,14 @@ func main() {
 	})
 
 	win2 := app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title: "Window 2",
+		Title: "Events Demo",
+		Name:  "Window 2",
 		Mac: application.MacWindow{
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInsetUnified,
 			InvisibleTitleBarHeight: 50,
 		},
 	})
-
-	go func() {
-		for {
-			win2.EmitEvent("windowevent", "ooooh!")
-			time.Sleep(10 * time.Second)
-		}
-	}()
 
 	var cancel bool
 
@@ -103,8 +98,8 @@ func main() {
 		}
 	})
 
-	win2.OnWindowEvent(events.Common.WindowFocus, func(e *application.WindowEvent) {
-		app.Logger.Info("[ApplicationEvent] Window focus!")
+	win2.On(events.Common.WindowFocus, func(e *application.WindowEvent) {
+		app.Logger.Info("[Event] Window focus!")
 	})
 
 	err := app.Run()

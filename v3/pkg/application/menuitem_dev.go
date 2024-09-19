@@ -2,7 +2,7 @@
 
 package application
 
-func NewOpenDevToolsMenuItem() *MenuItem {
+func newOpenDevToolsMenuItem() *MenuItem {
 	return NewMenuItem("Open Developer Tools").
 		SetAccelerator("Alt+Command+I").
 		OnClick(func(ctx *Context) {

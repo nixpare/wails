@@ -40,7 +40,8 @@ func newIShellItem(path string) (*iShellItem, error) {
 
 func (vtbl *iShellItemVtbl) getDisplayName(objPtr unsafe.Pointer) (string, error) {
 	var ptr *uint16
-	ret, _, _ := syscall.SyscallN(vtbl.GetDisplayName,
+	ret, _, _ := syscall.Syscall(vtbl.GetDisplayName,
+		2,
 		uintptr(objPtr),
 		0x80058000, // SIGDN_FILESYSPATH
 		uintptr(unsafe.Pointer(&ptr)))

@@ -221,7 +221,7 @@ func (m *macosApp) setApplicationMenu(menu *Menu) {
 
 func (m *macosApp) run() error {
 	// Add a hook to the ApplicationDidFinishLaunching event
-	m.parent.OnApplicationEvent(events.Mac.ApplicationDidFinishLaunching, func(*ApplicationEvent) {
+	m.parent.On(events.Mac.ApplicationDidFinishLaunching, func(*Event) {
 		C.setApplicationShouldTerminateAfterLastWindowClosed(C.bool(m.parent.options.Mac.ApplicationShouldTerminateAfterLastWindowClosed))
 		C.setActivationPolicy(C.int(m.parent.options.Mac.ActivationPolicy))
 		C.activateIgnoringOtherApps()
@@ -348,7 +348,7 @@ func cleanup() {
 func (a *App) logPlatformInfo() {
 	info, err := operatingsystem.Info()
 	if err != nil {
-		a.error("Error getting OS info: %s", err.Error())
+		a.error("Error getting OS info", "error", err.Error())
 		return
 	}
 
@@ -360,8 +360,9 @@ func (a *App) platformEnvironment() map[string]any {
 	return map[string]any{}
 }
 
+
 func fatalHandler(errFunc func(error)) {
-	return
+	return 
 }
 
 func (a *App) NewWebviewPanelWithOptions(panelOptions WebviewPanelOptions) *WebviewPanel {

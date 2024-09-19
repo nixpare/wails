@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"runtime"
 
@@ -43,10 +42,7 @@ func GenerateSyso(options *SysoOptions) (err error) {
 		return err
 	}
 	defer func() {
-		err2 := iconFile.Close()
-		if err == nil && err2 != nil {
-			err = errors.Wrap(err, "error closing icon file: "+err2.Error())
-		}
+		err = iconFile.Close()
 	}()
 	ico, err := winres.LoadICO(iconFile)
 	if err != nil {
